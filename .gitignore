@@ -1,0 +1,6 @@
+/.env
+/__pycache__
+/law_img
+/video
+/video_output.mp4
+/weights
