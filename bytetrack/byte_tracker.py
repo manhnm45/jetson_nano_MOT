@@ -172,18 +172,34 @@ class BYTETracker(object):
         refind_stracks = []
         lost_stracks = []
         removed_stracks = []
-        scores=scores.reshape(-1)
-
+        score_array= np.array(scores)
+        scores=score_array.reshape(-1)
+        print("scores",scores)
         remain_inds = scores > self.track_thresh
         inds_low = scores > 0.1
         inds_high = scores < self.track_thresh
-
-        inds_second = np.logical_and(inds_low, inds_high)
-        dets_second = bboxes[inds_second]
-        dets = bboxes[remain_inds]
-        scores_keep = scores[remain_inds]
-        scores_second = scores[inds_second]
-
+        #print(inds_low)
+        #print(inds_low)
+        dets_second=[]
+        scores_second=[]
+        dets=[]
+        scores_keep=[]
+        for i, score in enumerate(scores):
+            inds_second = np.logical_and(score>0.1,score<self.track_thresh)
+            print(inds_second)
+            if inds_second:
+                dets_second.append(bboxes[i])
+                scores_second.append(scores[i])
+            if score >self.track_thresh:
+                dets.append(bboxes[i])
+                scores_keep.append(scores[i])
+        #inds_second = np.logical_and(inds_low, inds_high)
+        #print(inds_second)
+        #dets_second = bboxes[inds_second]
+        #dets = bboxes[remain_inds]
+        #scores_keep = scores[remain_inds]
+        #scores_second = scores[inds_second]
+        print("scores_keep",scores_keep)
         if len(dets) > 0:
             '''Detections'''
             detections = [STrack(STrack.tlbr_to_tlwh(tlbr), s,cls) for
@@ -305,8 +321,8 @@ class BYTETracker(object):
             vertical = tlwh[2] / tlwh[3] > 1.6
             if tlwh[2] * tlwh[3] > self.min_box_area and not vertical:
                 x1, y1, w, h = tlwh
-                data_tracks.append([x1,y1,x1+w,y1+h,tid,t.cls,t.det])
-            
+                data_tracks.append([x1,y1,x1+w,y1+h,t.cls,tid])
+        print("data_track",data_tracks)
 
         return data_tracks
 

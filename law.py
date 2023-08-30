@@ -12,12 +12,15 @@ def Average(cl):
 def midPoint(x0, y0, x1, y1):
     return int(x0 + (x1 - x0) / 2), int(y0 + (y1 - y0) / 2)
 
+#Tests whether the turn formed by A, B, and C 
+#ccw return true the turn (A->B->C) is counterclockwise
+# otherwise, it’s clockwise. 
 def ccw(A, B, C):
     return (C[1] - A[1]) * (B[0] - A[0]) > (B[1] - A[1]) * (C[0] - A[0])
 
-
-def intersect(A, B, C, D):
-    return ccw(A, C, D) != ccw(B, C, D) and ccw(A, B, C) != ccw(A, B, D)
+#function to determine intersect the lane
+def intersect(pre_track, cur_track, start_line, end_line):
+    return ccw(Apre_track, start_line, end_line) != ccw(cur_track, start_line, end_line) and ccw(pre_track, cur_track, start_line) != ccw(pre_track, cur_track, end_line)
 
 def colorDetector(frame, rect= [480, 51, 517, 61]):
     # cv2.imshow("frame", frame)

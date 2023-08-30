@@ -5,7 +5,6 @@ import numpy as np
 from deep_sort.utils.parser import get_config
 from deep_sort.deep_sort import DeepSort
 
-
 cfg = get_config()
 cfg.merge_from_file("deep_sort/configs/deep_sort.yaml")
 deepsort = DeepSort(cfg.DEEPSORT.REID_CKPT,
@@ -18,6 +17,7 @@ deepsort = DeepSort(cfg.DEEPSORT.REID_CKPT,
 def draw_bboxes(image, bboxes, line_thickness):
     line_thickness = line_thickness or round(
         0.002 * (image.shape[0] + image.shape[1]) * 0.5) + 1
+    print("line_thickness", line_thickness)
 
     list_pts = []
     point_radius = 4
@@ -29,9 +29,11 @@ def draw_bboxes(image, bboxes, line_thickness):
         check_point_x = x1
         check_point_y = int(y1 + ((y2 - y1) * 0.6))
 
-        c1, c2 = (x1, y1), (x2, y2)
-        cv2.rectangle(image, c1, c2, color, thickness=line_thickness, lineType=cv2.LINE_AA)
-        cv2.rectangle()
+        c1, c2 = (int(x1), int(y1)), (int(x2), int(y2))
+        print("c1",c1)
+        print("c2",c2)
+        cv2.rectangle(image, c2, c1, color, thickness=line_thickness, lineType=cv2.LINE_AA)
+
         font_thickness = max(line_thickness - 1, 1)
         t_size = cv2.getTextSize(cls_id, 0, fontScale=line_thickness / 3, thickness=font_thickness)[0]
         c2 = c1[0] + t_size[0], c1[1] - t_size[1] - 3
