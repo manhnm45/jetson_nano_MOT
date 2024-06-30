@@ -2,7 +2,6 @@ import cv2
 import tracker
 from detector import Detector
 import numpy as np
-import time
 import torch.cuda
 from datetime import datetime
 from law import colorDetector, midPoint, intersect
@@ -19,12 +18,7 @@ t_counter4 = []
 t_counter5 = []
 v_counter = []
 # Functions
-def updateCrossLight(img, x0,y0,track_id, time_stamp):
-    v_counter.append(track_id)
-    cv2.rectangle(img, (x0, y0 - 10), (x0 + 10, y0), (0, 0, 255), -1)
-    saveDir = "./law_img"
-    file_name = "vuot_den_{}".format(time_stamp)
-    cv2.imwrite("{}/{}.jpg".format(saveDir, file_name), img)
+
 
 lane_left = data["lane_left"]
 lane_center = data["lane_center"]
@@ -41,17 +35,9 @@ while True:
     classes =[]
     score =[]
     torch.cuda.empty_cache()
-    t = time.time()
     ret, frame = capture.read()
-    #print("frame", frame)
-    #h, w, c =frame.shape
-    #print("h/2",h/2)
-    #frame = frame[int(h/2):h , 0:w]
-    #cv2.imshow("frame", frame)
-    #cv2.waitKey()
+    print("size frame", frame.shape)
     boxes = detector.detect(frame)
-    #print("len_box", len(boxes))
-
     #print("boxes", boxes)
     for i in range(len(boxes)):
         box.append([int(boxes[i][0]),int(boxes[i][1]),int(boxes[i][2]),int(boxes[i][3])])
@@ -67,9 +53,9 @@ while True:
     #print("boxes",boxes[0])
     #print("ok")
     frame2 = frame.copy()
-    if data["detect_license"]:
-        license_plate = lpd.detector_lp(frame2, boxes)
-
+    
+    
+    
     #cv2.rectangle()
     current_color = colorDetector(frame)
     time_stamp = datetime.now().strftime('%Y_%m_%d-%H_%M_%S')
@@ -83,15 +69,15 @@ while True:
         y1 = int(box[3])
         #print("track_id", track_id)
         current[track_id]  = midPoint(x0,y0,x1,y1)
-
+        
         if track_id in previous:
             cv2.line(frame, previous[track_id], current[track_id], (0,255,0), 1)
             line_group0 = [lane_left, lane_center, lane_right]
-            
+            #print("ok")
             for element in line_group0:
                 if len(element):
                     
-                    # print(element)
+                    #print(element)
                     start_line = element[0],element[1]
                     end_line = element[2], element[3]
                     frame = cv2.line(frame,start_line,end_line,(255,0,0),2)
@@ -103,14 +89,17 @@ while True:
                             current_color = "green"
                             if current_color != "red":
                                 print("Fined")
+                                if data["detect_license"]:
+                                    print("boxes", boxes[i])
+                                    license_plate = lpd.detector_lp(frame2, boxes[i])
+                                    try:
+                                        cv2.imshow("license",license_plate)
+                                        #license_img_path = 
+
+                                        cv2.imwrite()
+                                    except:
+                                        pass
                                 
-                                    # try:
-                                    #     cv2.imshow("license",license_plate)
-                                    #     #license_img_path = 
-                                    #     cv2.imwrite()
-                                    # except:
-                                    #     pass
-                                updateCrossLight(frame, x0, y0, track_id, time_stamp)
             #print("t_contour1", t_counter1)
             line_group1 = [derect_left, derect_center, derect_right]
             for element in line_group1:
@@ -128,9 +117,9 @@ while True:
 
     # print(colorDetector(frame=frame))
     
-    frameToShown = cv2.resize(frameToDraw, (1080,720))
+    frameToShown = cv2.resize(frameToDraw, (1440,720))
     cv2.imshow("Video Stream", frameToShown)
-    duration = time.time() - t
+    #duration = time.time() - t
     #print(f"fps: {1/duration}")
     if cv2.waitKey(1) == ord('q'):
         break

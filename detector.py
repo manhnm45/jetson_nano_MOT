@@ -47,14 +47,15 @@ class Detector:
         pred = self.m(img, augment=False)[0]
         pred = pred.float()
         pred = non_max_suppression(pred, self.threshold, 0.4)
-
+        
         boxes = []
         for det in pred:
-
+            
             if det is not None and len(det):
+                
                 det[:, :4] = scale_coords(
                     img.shape[2:], det[:, :4], im0.shape).round()
-
+                
                 for *x, conf, cls_id in det:
                     lbl = self.names[int(cls_id)]
                     if lbl not in ['bicycle', 'car', 'motorcycle', 'bus', 'truck']:
@@ -63,6 +64,7 @@ class Detector:
                     x1, y1 = int(x[0]), int(x[1])
                     x2, y2 = int(x[2]), int(x[3])
                     boxes.append(
-                        (x1, y1, x2, y2, lbl, conf))
+                        [x1, y1, x2, y2, lbl, conf])
+                    
 
         return boxes

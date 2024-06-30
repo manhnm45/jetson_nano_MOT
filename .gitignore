@@ -1,6 +1,20 @@
-/.env
+/env
 /__pycache__
 /law_img
 /video
-/video_output.mp4
+/trafic video
 /weights
+/models_ESRGAN
+/test_images
+/results
+/result_preprocessing
+/path_video
+/img_car_for_cuongdetectlp
+/LR
+/licese_img
+/models
+/experiments
+/config.json
+/bytetrack.zip
+/yolov8_License_plate_obb.pt
+/detec_license_demo
